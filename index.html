@@ -511,11 +511,57 @@
             <h2 class="hero-subtitle">مش لوحدك في الطريق ده</h2>
             <p class="hero-desc">كتاب للشاب اللي ضايع… من شاب زيّه بالظبط</p>
             
-            <button class="cta-btn" onclick="document.getElementById('about').scrollIntoView({behavior: 'smooth'})">احصل على نسختك الآن</button>
+      <button class="cta-btn" id="playAndScrollBtn">🎧 اضغط للاستماع لبودكاست عن الكتاب</button>
+
+<!-- مشغل الصوت الكامل (هيظهر بعد الضغط) -->
+<div id="audioControlPanel" style="display: none; margin-top: 30px; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 20px;">
+    <audio id="podcastPlayer" controls style="width: 100%;">
+        <source src="واحد.m4a" type="audio/mp4">
+        متصفحك لا يدعم تشغيل الصوت
+    </audio>
+    <p style="font-size: 14px; margin-top: 10px; color: #ffd966;">🎙️ بودكاست عن الكتاب - استمتع بالمحتوى</p>
+</div>
+
+<div class="scroll-indicator">
+    ↓ استمر للأسفل عشان تعرف أكتر ↓
+</div>
+
+<script>
+    (function() {
+        var btn = document.getElementById('playAndScrollBtn');
+        var audioPanel = document.getElementById('audioControlPanel');
+        var audio = document.getElementById('podcastPlayer');
+        var aboutDiv = document.getElementById('about');
+        var isPanelShown = false;
+        
+        btn.addEventListener('click', function() {
+            // 1- إظهار لوحة التحكم بالصوت (بكل إعداداتها)
+            if (!isPanelShown) {
+                audioPanel.style.display = 'block';
+                isPanelShown = true;
+            }
             
-            <div class="scroll-indicator">
-                ↓ استمر للأسفل عشان تعرف أكتر ↓
-            </div>
+            // 2- تشغيل البودكاست
+            audio.play().catch(function(err) {
+                console.log('التشغيل اتحظر: ', err);
+            });
+            
+            // 3- السكرول لقسم about
+            if (aboutDiv) {
+                aboutDiv.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+        
+        // رسالة لو الملف مش موجود
+        audio.addEventListener('error', function() {
+            console.log('⚠️ ملف واحد.m4a مش موجود - تأكد من رفعه');
+            var errorMsg = document.createElement('div');
+            errorMsg.style.color = '#ffaaaa';
+            errorMsg.innerText = '❌ خطأ: لم يتم العثور على ملف البودكاست (واحد.m4a)';
+            audioPanel.appendChild(errorMsg);
+        });
+    })();
+</script>
         </div>
     </section>
 
