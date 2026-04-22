@@ -5,758 +5,1079 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>كتاب ليه تايه؟ - مش لوحدك في الطريق ده</title>
     
-    <!-- استدعاء خط Cairo من Google Fonts -->
+    <!-- استدعاء خط Cairo وأيقونات FontAwesome -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- متغيرات الألوان والتصميم --- */
+        /* --- متغيرات الألوان --- */
         :root {
-            --bg-main: #000000;
-            --bg-section: #0d0d0d;
-            --bg-card: #1a1a1a;
-            --bg-card-lighter: #2a2a2a;
-            --accent-color: #c9a84c; /* اللون الذهبي */
-            --accent-hover: #b08d3b;
-            --text-main: #ffffff;
-            --text-muted: #cccccc;
+            --bg-dark: #050505;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --bg-card-hover: rgba(255, 255, 255, 0.07);
+            --accent-gold: #D4AF37;
+            --accent-glow: rgba(212, 175, 55, 0.4);
+            --text-white: #ffffff;
+            --text-gray: #a0a0a0;
             --font-main: 'Cairo', sans-serif;
-            --transition: all 0.3s ease;
+            --border-radius: 16px;
+            --nav-height: 80px;
         }
 
-        /* --- التنسيقات الأساسية --- */
+        /* --- Reset & Base Styles --- */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            outline: none;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
             font-family: var(--font-main);
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            line-height: 1.6;
+            background-color: var(--bg-dark);
+            color: var(--text-white);
+            line-height: 1.7;
             overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Canvas Background */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- Typography --- */
+        h1, h2, h3 {
+            font-weight: 800;
+            line-height: 1.3;
+        }
+
+        p {
+            color: var(--text-gray);
+            font-size: 1.1rem;
         }
 
         a {
             text-decoration: none;
             color: inherit;
-            transition: var(--transition);
+            transition: all 0.3s ease;
         }
 
-        ul {
-            list-style: none;
-        }
-
-        img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        /* --- التخطيط العام --- */
+        /* --- Utility Classes --- */
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 25px;
         }
 
-        section {
-            padding: 80px 0;
+        .gold-text {
+            color: var(--accent-gold);
+            text-shadow: 0 0 15px var(--accent-glow);
         }
 
-        .section-title {
-            text-align: center;
-            font-size: 2.5rem;
-            color: var(--accent-color);
-            margin-bottom: 50px;
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px 40px;
+            background: linear-gradient(45deg, var(--accent-gold), #F2C94C);
+            color: #000;
             font-weight: 700;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
             position: relative;
+            overflow: hidden;
+            z-index: 1;
         }
 
-        .section-title::after {
+        .btn::before {
             content: '';
-            display: block;
-            width: 60px;
-            height: 3px;
-            background-color: var(--accent-color);
-            margin: 15px auto 0;
-            border-radius: 2px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            background: rgba(255,255,255,0.2);
+            transition: width 0.3s;
+            z-index: -1;
         }
 
-        /* --- الهيدر (القائمة العلوية) --- */
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.5);
+        }
+
+        .btn:hover::before {
+            width: 100%;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--text-white);
+        }
+
+        .section-header .line {
+            width: 80px;
+            height: 4px;
+            background: var(--accent-gold);
+            margin: 0 auto;
+            border-radius: 2px;
+            box-shadow: 0 0 10px var(--accent-gold);
+        }
+
+        /* --- Header & Nav --- */
         header {
-            background-color: rgba(0, 0, 0, 0.9);
-            padding: 20px 0;
-            position: sticky;
+            position: fixed;
             top: 0;
+            width: 100%;
+            height: var(--nav-height);
+            background: rgba(5, 5, 5, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             z-index: 1000;
-            border-bottom: 1px solid #222;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
         }
 
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            width: 100%;
         }
 
         .logo {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             font-weight: 900;
-            color: var(--accent-color);
+            color: var(--accent-gold);
         }
 
         .nav-links {
             display: flex;
-            gap: 20px;
+            gap: 40px;
         }
 
         .nav-links a {
-            font-size: 1rem;
-            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 1.05rem;
+            position: relative;
         }
 
-        .nav-links a:hover {
-            color: var(--accent-color);
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            right: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-gold);
+            transition: width 0.3s;
         }
 
-        /* --- قسم البداية (Hero Section) --- */
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            font-size: 1.5rem;
+            color: var(--text-white);
+            cursor: pointer;
+        }
+
+        /* --- Hero Section --- */
         #hero {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
-            background: radial-gradient(circle at center, #1a1a1a 0%, #000000 70%);
-            padding-top: 100px;
+            padding-top: var(--nav-height);
+            position: relative;
+            overflow: hidden;
         }
 
-        .hero-content {
-            max-width: 800px;
-            display: flex;
-            flex-direction: column;
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
             align-items: center;
         }
 
-        .book-cover-container {
-            width: 250px;
-            height: 380px;
-            margin-bottom: 30px;
-            position: relative;
+        /* 3D Book Animation */
+        .book-wrapper {
+            display: flex;
+            justify-content: center;
             perspective: 1000px;
         }
 
-        .book-cover {
-            width: 100%;
+        .book-cover-3d {
+            width: 300px;
+            height: 450px;
+            background: url('1.jpg') no-repeat center center/cover;
+            border-radius: 4px 16px 16px 4px;
+            box-shadow: 
+                -15px 15px 40px rgba(0,0,0,0.6),
+                inset 5px 0 10px rgba(255,255,255,0.1);
+            transform: rotateY(-25deg) rotateX(5deg);
+            transition: transform 0.5s ease;
+            animation: float 6s ease-in-out infinite;
+            position: relative;
+        }
+
+        .book-cover-3d::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
             height: 100%;
-            object-fit: cover;
-            border-radius: 5px 15px 15px 5px;
-            box-shadow: -10px 10px 30px rgba(0,0,0,0.7);
-            transform: rotateY(-15deg);
-            transition: var(--transition);
+            width: 15px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.3), rgba(0,0,0,0.5));
+            z-index: 2;
         }
 
-        .book-cover-container:hover .book-cover {
-            transform: rotateY(0deg) scale(1.05);
+        .book-cover-3d:hover {
+            transform: rotateY(-15deg) rotateX(0deg) scale(1.05);
+            animation-play-state: paused;
         }
 
-        h1 {
-            font-size: 4rem;
-            font-weight: 900;
-            margin-bottom: 10px;
-            line-height: 1.2;
+        @keyframes float {
+            0%, 100% { transform: rotateY(-25deg) rotateX(5deg) translateY(0); }
+            50% { transform: rotateY(-25deg) rotateX(5deg) translateY(-20px); }
         }
 
-        .hero-subtitle {
-            font-size: 1.5rem;
-            color: var(--text-muted);
+        .hero-content {
+            text-align: right;
+        }
+
+        .hero-tag {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+            border-radius: 30px;
+            font-size: 0.9rem;
             margin-bottom: 20px;
         }
 
-        .hero-desc {
-            font-size: 1.2rem;
-            max-width: 600px;
-            margin-bottom: 40px;
-            color: #bbb;
+        .hero-title {
+            font-size: 4rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #fff, #999);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .cta-btn {
-            background-color: var(--accent-color);
-            color: #000;
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            border-radius: 50px;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(201, 168, 76, 0.4);
-            transition: var(--transition);
+        .hero-subtitle {
+            font-size: 1.8rem;
+            color: var(--accent-gold);
+            margin-bottom: 25px;
         }
 
-        .cta-btn:hover {
-            background-color: var(--accent-hover);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(201, 168, 76, 0.6);
-        }
-
-        .scroll-indicator {
+        .audio-player-wrapper {
             margin-top: 40px;
-            animation: bounce 2s infinite;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.6s ease;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 0 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .audio-player-wrapper.active {
+            opacity: 1;
+            max-height: 100px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        audio {
+            width: 100%;
+            height: 40px;
+            filter: invert(1) hue-rotate(180deg); /* Quick styling hack for dark mode */
+        }
+
+        .scroll-mouse {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-gray);
             font-size: 0.9rem;
-            color: var(--text-muted);
+            animation: bounce 2s infinite;
         }
 
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
-            40% {transform: translateY(-10px);}
-            60% {transform: translateY(-5px);}
+        /* --- Sections General --- */
+        section {
+            padding: 100px 0;
+            position: relative;
         }
 
-        /* --- قسم عن الكتاب --- */
-        #about {
-            background-color: var(--bg-section);
-        }
-
-        .about-card {
-            background-color: var(--bg-card);
-            padding: 40px;
-            border-radius: 15px;
+        /* --- About Section --- */
+        #about .about-content {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 50px;
+            backdrop-filter: blur(10px);
             text-align: center;
-            border: 1px solid #333;
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
         }
 
-        .about-card p {
-            font-size: 1.2rem;
-            margin-bottom: 15px;
+        #about .about-content::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            right: 20px;
+            font-size: 10rem;
+            color: rgba(212, 175, 55, 0.05);
+            font-family: serif;
+            pointer-events: none;
         }
 
-        .about-card strong {
-            color: var(--accent-color);
-            font-size: 1.4rem;
-        }
-
-        /* --- قسم ليه تقرأ الكتاب ده؟ (Grid) --- */
-        #why-read {
-            background-color: var(--bg-main);
-        }
-
-        .grid-container {
+        /* --- Why Read (Cards) --- */
+        .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
         }
 
         .feature-card {
-            background-color: var(--bg-card-lighter);
-            padding: 30px;
-            border-radius: 10px;
-            transition: var(--transition);
-            border-bottom: 3px solid transparent;
+            background: var(--bg-card);
+            padding: 35px;
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
         }
 
         .feature-card:hover {
-            transform: translateY(-5px);
-            border-bottom-color: var(--accent-color);
-            background-color: #333;
+            transform: translateY(-10px);
+            background: var(--bg-card-hover);
+            border-color: var(--accent-gold);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .feature-card i {
+            font-size: 2rem;
+            color: var(--accent-gold);
+            margin-bottom: 20px;
+            display: inline-block;
         }
 
         .feature-card h3 {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             margin-bottom: 15px;
-            color: var(--accent-color);
+        }
+
+        /* --- Chapters List --- */
+        .chapters-container {
+            background: var(--bg-card);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .chapter-row {
             display: flex;
             align-items: center;
-            gap: 10px;
+            padding: 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s;
+            cursor: default;
         }
 
-        .feature-card p {
-            color: var(--text-muted);
-            font-size: 1rem;
-        }
-
-        /* --- قسم فصول الكتاب --- */
-        #chapters {
-            background-color: var(--bg-section);
-        }
-
-        .chapters-list {
-            background-color: var(--bg-card);
-            padding: 40px;
-            border-radius: 15px;
-        }
-
-        .chapter-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 15px 20px;
-            border-bottom: 1px solid #333;
-            transition: var(--transition);
-        }
-
-        .chapter-item:last-child {
+        .chapter-row:last-child {
             border-bottom: none;
         }
 
-        .chapter-item:hover {
-            background-color: #252525;
-            padding-right: 30px; /* Slide effect */
+        .chapter-row:hover {
+            background: rgba(255,255,255,0.02);
+            padding-right: 35px;
         }
 
         .chapter-num {
-            font-weight: bold;
-            color: var(--accent-color);
-            width: 80px;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: rgba(255,255,255,0.1);
+            margin-left: 20px;
+            font-family: sans-serif; /* English numbers for style */
         }
 
         .chapter-title {
-            flex-grow: 1;
+            font-size: 1.2rem;
+            font-weight: 600;
         }
 
-        /* --- قسم شوية من جوه الكتاب (Quotes) --- */
-        #quotes {
-            background-color: var(--bg-main);
-        }
-
+        /* --- Quotes Section --- */
         .quotes-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 30px;
         }
 
         .quote-card {
-            background: linear-gradient(135deg, #333, #1a1a1a);
-            padding: 30px;
-            border-radius: 15px;
-            border-right: 4px solid var(--accent-color);
+            background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            border-right: 4px solid var(--accent-gold);
             position: relative;
         }
 
-        .quote-card p {
-            font-size: 1.3rem;
+        .quote-text {
+            font-family: 'Times New Roman', serif; /* Serif for elegance */
+            font-size: 1.4rem;
             font-style: italic;
-            line-height: 1.7;
+            line-height: 1.8;
+            margin-bottom: 0;
         }
 
-        .quote-card::before {
-            content: '“';
-            position: absolute;
-            top: 10px;
-            left: 20px;
-            font-size: 4rem;
-            color: rgba(201, 168, 76, 0.1);
-            font-family: serif;
-        }
-
-        /* --- قسم عن الكاتب --- */
-        #author {
-            background-color: var(--bg-section);
-        }
-
-        .author-container {
+        /* --- Author Section --- */
+        .author-box {
             display: flex;
             align-items: center;
-            gap: 50px;
-            background-color: var(--bg-card);
-            padding: 50px;
-            border-radius: 15px;
+            gap: 60px;
+            background: var(--bg-card);
+            border-radius: 30px;
+            padding: 60px;
+            border: 1px solid rgba(255,255,255,0.05);
             flex-wrap: wrap;
         }
 
-        .author-text {
-            flex: 1;
-            min-width: 300px;
-        }
-
-        .author-text h3 {
-            font-size: 2rem;
-            margin-bottom: 20px;
-            color: var(--text-main);
-        }
-
-        .author-text p {
-            margin-bottom: 15px;
-            font-size: 1.1rem;
-            color: var(--text-muted);
-        }
-
-        .author-text strong {
-            color: var(--text-main);
-            font-size: 1.3rem;
-            display: block;
-            margin: 10px 0;
+        .author-img-container {
+            position: relative;
+            flex-shrink: 0;
         }
 
         .author-img {
-            flex: 0 0 250px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .author-img img {
-            width: 250px;
-            height: 250px;
+            width: 280px;
+            height: 280px;
             border-radius: 50%;
             object-fit: cover;
-            border: 4px solid var(--accent-color);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 4px solid var(--accent-gold);
+            box-shadow: 0 0 30px var(--accent-glow);
+            position: relative;
+            z-index: 2;
         }
 
-        /* --- قسم الأسئلة المتكررة (FAQ) --- */
-        #faq {
-            background-color: var(--bg-main);
+        .author-bg-circle {
+            position: absolute;
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            background: var(--accent-gold);
+            top: -20px;
+            right: -20px;
+            z-index: 1;
+            filter: blur(40px);
+            opacity: 0.3;
         }
 
+        /* --- FAQ --- */
         .faq-item {
-            background-color: var(--bg-card);
             margin-bottom: 20px;
-            border-radius: 10px;
+            border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.05);
             overflow: hidden;
         }
 
         summary {
             padding: 25px;
-            font-size: 1.2rem;
-            font-weight: bold;
             cursor: pointer;
-            list-style: none;
+            font-weight: 700;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            color: var(--text-main);
+            list-style: none;
+            font-size: 1.2rem;
             transition: background 0.3s;
         }
 
         summary:hover {
-            background-color: #252525;
-            color: var(--accent-color);
+            background: rgba(255,255,255,0.03);
+            color: var(--accent-gold);
         }
 
         summary::after {
             content: '+';
             font-size: 1.5rem;
-            color: var(--accent-color);
             transition: transform 0.3s;
+            color: var(--accent-gold);
         }
 
         details[open] summary::after {
             transform: rotate(45deg);
         }
 
-        .faq-content {
+        .faq-body {
             padding: 0 25px 25px 25px;
-            color: var(--text-muted);
-            border-top: 1px solid #333;
-            padding-top: 20px;
+            color: var(--text-gray);
+            line-height: 1.8;
+            border-top: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* --- الفوتر --- */
+        /* --- Footer --- */
         footer {
-            background-color: #000;
-            padding: 40px 0;
+            background: #000;
+            padding: 60px 0 30px;
             text-align: center;
             border-top: 1px solid #222;
         }
 
-        footer p {
+        .footer-logo {
+            font-size: 2rem;
+            color: var(--accent-gold);
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .copyright {
             color: #666;
+            margin-top: 30px;
             font-size: 0.9rem;
         }
 
-        footer span {
-            color: var(--accent-color);
+        /* --- Animations & Utilities --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease-out;
         }
 
-        /* --- تجاوب الشاشات (Media Queries) --- */
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translate(-50%, 0);}
+            40% {transform: translate(-50%, -10px);}
+            60% {transform: translate(-50%, -5px);}
+        }
+
+        /* --- Mobile Responsive --- */
+        @media (max-width: 992px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .hero-content {
+                text-align: center;
+                order: 2;
+            }
+
+            .book-wrapper {
+                order: 1;
+                margin-bottom: 30px;
+            }
+            
+            .author-box {
+                flex-direction: column;
+                text-align: center;
+                padding: 40px 20px;
+            }
+        }
+
         @media (max-width: 768px) {
-            h1 { font-size: 2.5rem; }
-            .hero-subtitle { font-size: 1.2rem; }
-            .grid-container { grid-template-columns: 1fr; }
-            .quotes-grid { grid-template-columns: 1fr; }
-            .author-container { flex-direction: column; text-align: center; }
-            .author-img { margin-bottom: 30px; }
-            .nav-links { display: none; } /* يمكن إضافة قائمة برجر للهواتف في المستقبل */
-            .chapter-item { flex-direction: column; gap: 5px; }
-            .chapter-num { width: auto; margin-bottom: 5px; }
+            .hero-title { font-size: 2.8rem; }
+            
+            .nav-links {
+                position: fixed;
+                top: var(--nav-height);
+                right: -100%;
+                width: 70%;
+                height: calc(100vh - var(--nav-height));
+                background: #111;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                transition: 0.4s ease;
+                border-left: 1px solid #222;
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .container { padding: 0 20px; }
+            section { padding: 60px 0; }
         }
     </style>
 </head>
 <body>
 
-    <!-- الهيدر -->
+    <!-- Canvas Background -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Navigation -->
     <header>
         <div class="container">
             <nav>
                 <div class="logo">ليه تايه؟</div>
-                <div class="nav-links">
-                    <a href="#about">عن الكتاب</a>
-                    <a href="#why-read">ليه تقرأ؟</a>
-                    <a href="#author">الكاتب</a>
-                    <a href="#faq">أسئلة شائعة</a>
+                <div class="nav-links" id="navLinks">
+                    <a href="#about" onclick="toggleMenu()">عن الكتاب</a>
+                    <a href="#why-read" onclick="toggleMenu()">ليه تقرأ؟</a>
+                    <a href="#chapters" onclick="toggleMenu()">الفصول</a>
+                    <a href="#author" onclick="toggleMenu()">الكاتب</a>
+                    <a href="#faq" onclick="toggleMenu()">أسئلة شائعة</a>
+                </div>
+                <div class="mobile-menu-btn" onclick="toggleMenu()">
+                    <i class="fas fa-bars"></i>
                 </div>
             </nav>
         </div>
     </header>
 
-    <!-- القسم الرئيسي (Hero) -->
+    <!-- Hero Section -->
     <section id="hero">
-        <div class="container hero-content">
-            <div class="book-cover-container">
-                <!-- صورة الغلاف (Placeholder) -->
-             <img src="1.jpg" alt="غلاف كتاب ليه تايه" class="book-cover">
+        <div class="container">
+            <div class="hero-grid">
+                <!-- 3D Book -->
+                <div class="book-wrapper reveal">
+                    <!-- تأكد من وجود الصورة 1.jpg -->
+                    <div class="book-cover-3d"></div>
+                </div>
+                
+                <!-- Text Content -->
+                <div class="hero-content reveal">
+                    <span class="hero-tag">مش لوحدك في الطريق ده</span>
+                    <h1 class="hero-title">ليه تايه؟</h1>
+                    <h2 class="hero-subtitle">كتاب للشاب اللي ضايع… من شاب زيّه بالظبط</h2>
+                    <p style="margin-bottom: 30px; font-size: 1.1rem; opacity: 0.8;">
+                        مش مجرد كتاب، ده صاحب بيكلمك. رحلة للبحث عن الإجابة لسؤال "أنا عايش ليه؟".
+                    </p>
+                    
+                    <button class="btn" id="playBtn">
+                        <i class="fas fa-play"></i>
+                        اضغط للاستماع لبودكاست عن الكتاب
+                    </button>
+
+                    <!-- Audio Player (Hidden initially) -->
+                    <div class="audio-player-wrapper" id="audioPanel">
+                        <!-- تأكد من وجود الملف واحد.m4a -->
+                        <audio id="podcastAudio" controls>
+                            <source src="واحد.m4a" type="audio/mp4">
+                            المتصفح الخاص بك لا يدعم تشغيل الصوت.
+                        </audio>
+                        <div style="font-size: 0.8rem; color: #aaa; margin-top: 8px; text-align: center;">
+                            <i class="fas fa-headphones"></i> بودكاست خاص بالكتاب
+                        </div>
+                    </div>
+                </div>
             </div>
-            
-            <h1>ليه تايه؟</h1>
-            <h2 class="hero-subtitle">مش لوحدك في الطريق ده</h2>
-            <p class="hero-desc">كتاب للشاب اللي ضايع… من شاب زيّه بالظبط</p>
-            
-      <button class="cta-btn" id="playAndScrollBtn">🎧 اضغط للاستماع لبودكاست عن الكتاب</button>
-
-<!-- مشغل الصوت الكامل (هيظهر بعد الضغط) -->
-<div id="audioControlPanel" style="display: none; margin-top: 30px; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 20px;">
-    <audio id="podcastPlayer" controls style="width: 100%;">
-        <source src="واحد.m4a" type="audio/mp4">
-        متصفحك لا يدعم تشغيل الصوت
-    </audio>
-    <p style="font-size: 14px; margin-top: 10px; color: #ffd966;">🎙️ بودكاست عن الكتاب - استمتع بالمحتوى</p>
-</div>
-
-<div class="scroll-indicator">
-    ↓ استمر للأسفل عشان تعرف أكتر ↓
-</div>
-
-<script>
-    (function() {
-        var btn = document.getElementById('playAndScrollBtn');
-        var audioPanel = document.getElementById('audioControlPanel');
-        var audio = document.getElementById('podcastPlayer');
-        var aboutDiv = document.getElementById('about');
-        var isPanelShown = false;
+        </div>
         
-        btn.addEventListener('click', function() {
-            // 1- إظهار لوحة التحكم بالصوت (بكل إعداداتها)
-            if (!isPanelShown) {
-                audioPanel.style.display = 'block';
-                isPanelShown = true;
-            }
-            
-            // 2- تشغيل البودكاست
-            audio.play().catch(function(err) {
-                console.log('التشغيل اتحظر: ', err);
-            });
-            
-            // 3- السكرول لقسم about
-            if (aboutDiv) {
-                aboutDiv.scrollIntoView({ behavior: 'smooth' });
-            }
-        });
-        
-        // رسالة لو الملف مش موجود
-        audio.addEventListener('error', function() {
-            console.log('⚠️ ملف واحد.m4a مش موجود - تأكد من رفعه');
-            var errorMsg = document.createElement('div');
-            errorMsg.style.color = '#ffaaaa';
-            errorMsg.innerText = '❌ خطأ: لم يتم العثور على ملف البودكاست (واحد.m4a)';
-            audioPanel.appendChild(errorMsg);
-        });
-    })();
-</script>
+        <div class="scroll-mouse">
+            <span>اكتشف المزيد</span>
+            <i class="fas fa-chevron-down" style="margin-top: 5px;"></i>
         </div>
     </section>
 
-    <!-- عن الكتاب -->
+    <!-- About Section -->
     <section id="about">
         <div class="container">
-            <div class="section-title">📖 عن الكتاب</div>
-            <div class="about-card">
-                <p style="font-weight: bold; margin-bottom: 20px; font-size: 1.4rem;">مش مجرد كتاب… ده صاحب بيكلمك</p>
+            <div class="section-header reveal">
+                <h2>عن الكتاب</h2>
+                <div class="line"></div>
+            </div>
+            
+            <div class="about-content reveal">
+                <p style="font-size: 1.4rem; font-weight: bold; margin-bottom: 20px; color: var(--text-white);">
+                    مش مجرد كتاب… ده صاحب بيكلمك
+                </p>
                 <p>"ليه تايه؟" مش كتاب تنمية بشرية تقليدي. مش هتلاقي فيه كلام منمق وفلسفة فارغة.</p>
                 <br>
                 <p>الكتاب ده كتبه واحد عايش نفس اللي انت عايشه. واحد تايه. واحد بضعف. واحد بيقع ويقوم. واحد بيفتح السوشيال ميديا ويسيبها تسرق ساعات من عمره. واحد عارف يعني إيه تكون بعيد عن ربنا ومش عارف ترجع.</p>
                 <br>
-                <p style="color: var(--accent-color);">الكتاب ده رحلة. رحلة أنا وأنت مع بعض.</p>
+                <p class="gold-text" style="font-weight: bold; font-size: 1.2rem;">الكتاب ده رحلة. رحلة أنا وأنت مع بعض.</p>
             </div>
         </div>
     </section>
 
-    <!-- ليه تقرأ الكتاب ده؟ -->
+    <!-- Why Read Section -->
     <section id="why-read">
         <div class="container">
-            <div class="section-title">🎯 ليه تقرأ الكتاب ده؟</div>
-            <div class="grid-container">
-                <div class="feature-card">
-                    <h3>💾 حاسس إنك تايه؟</h3>
+            <div class="section-header reveal">
+                <h2>ليه تقرأ الكتاب ده؟</h2>
+                <div class="line"></div>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card reveal">
+                    <i class="fas fa-compass"></i>
+                    <h3>حاسس إنك تايه؟</h3>
                     <p>الفصل الأول هيجاوب على سؤال: "أنا عايش ليه؟" مش بسؤال فلسفي. بتمرين عملي يخلّيك تكتب هدفك في الحياة بنفسك.</p>
                 </div>
-                <div class="feature-card">
-                    <h3>🔄 بتكرر نفس الذنب؟</h3>
+
+                <div class="feature-card reveal">
+                    <i class="fas fa-sync-alt"></i>
+                    <h3>بتكرر نفس الذنب؟</h3>
                     <p>الفصل التاني هيفهمك ليه بتعمل الذنب وانت عارف إنه غلط. وهيديك خطوات عملية تقلل الذنب تدريجيًا. مش تبطل مرة واحدة. تقلل شوية شوية.</p>
                 </div>
-                <div class="feature-card">
-                    <h3>📱 السوشيال ميديا مسيطرة عليك؟</h3>
+
+                <div class="feature-card reveal">
+                    <i class="fas fa-mobile-alt"></i>
+                    <h3>السوشيال ميديا مسيطرة عليك؟</h3>
                     <p>الفصل الثالث هيكشف لك إزاي التطبيقات دي مصممة عشان تدمنها. وهيديك نظام عملي يخلّيك تمسك زمام دماغك تاني.</p>
                 </div>
-                <div class="feature-card">
-                    <h3>💔 متعلق بحد ومش عارف تسيبه؟</h3>
+
+                <div class="feature-card reveal">
+                    <i class="fas fa-heart-broken"></i>
+                    <h3>متعلق بحد ومش عارف تسيبه؟</h3>
                     <p>الفصل الرابع هيفرق لك بين الحب الحقيقي والتعلق المرضي. وهيساعدك تحافظ على نفسك في السن ده.</p>
                 </div>
-                <div class="feature-card">
-                    <h3>🕌 عاوز ترجع لربنا بجد؟</h3>
+
+                <div class="feature-card reveal">
+                    <i class="fas fa-kaaba"></i>
+                    <h3>عاوز ترجع لربنا بجد؟</h3>
                     <p>الفصل الخامس مش هيقول لك "صلي وهتبقى تمام". هيديك جدول عملي بسيط جدًا للصلاة والقرآن والدعاء. جدول يقدر عليه أي حد.</p>
                 </div>
-                <div class="feature-card">
-                    <h3>🤝 مش عاوز تفضل لوحدك؟</h3>
+
+                <div class="feature-card reveal">
+                    <i class="fas fa-user-friends"></i>
+                    <h3>مش عاوز تفضل لوحدك؟</h3>
                     <p>الفصل الختامي هو رسالة أخيرة من واحد تايه زيّك. عشان تفتكر إنك مش لوحدك في الطريق ده.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- فصول الكتاب -->
+    <!-- Chapters Section -->
     <section id="chapters">
         <div class="container">
-            <div class="section-title">📝 فصول الكتاب</div>
-            <div class="chapters-list">
-                <div class="chapter-item">
-                    <span class="chapter-num">تمهيد</span>
-                    <span class="chapter-title">قبل ما نبدأ...</span>
+            <div class="section-header reveal">
+                <h2>فصول الكتاب</h2>
+                <div class="line"></div>
+            </div>
+
+            <div class="chapters-container reveal">
+                <div class="chapter-row">
+                    <span class="chapter-title">تمهيد - قبل ما نبدأ...</span>
+                    <span class="chapter-num">00</span>
                 </div>
-                <div class="chapter-item">
-                    <span class="chapter-num">١</span>
+                <div class="chapter-row">
                     <span class="chapter-title">أنا تايه… أعمل إيه؟</span>
+                    <span class="chapter-num">01</span>
                 </div>
-                <div class="chapter-item">
-                    <span class="chapter-num">٢</span>
+                <div class="chapter-row">
                     <span class="chapter-title">ليه بعمل الذنب وأنا عارف إنه غلط؟</span>
+                    <span class="chapter-num">02</span>
                 </div>
-                <div class="chapter-item">
-                    <span class="chapter-num">٣</span>
+                <div class="chapter-row">
                     <span class="chapter-title">السوشيال ميديا بتدمر دماغك</span>
+                    <span class="chapter-num">03</span>
                 </div>
-                <div class="chapter-item">
-                    <span class="chapter-num">٤</span>
+                <div class="chapter-row">
                     <span class="chapter-title">العلاقات… حب ولا وهم؟</span>
+                    <span class="chapter-num">04</span>
                 </div>
-                <div class="chapter-item">
-                    <span class="chapter-num">٥</span>
+                <div class="chapter-row">
                     <span class="chapter-title">ترجع لربنا ازاي بجد؟</span>
+                    <span class="chapter-num">05</span>
                 </div>
-                <div class="chapter-item">
-                    <span class="chapter-num">ختامي</span>
+                <div class="chapter-row">
                     <span class="chapter-title">رسالة أخيرة من واحد تايه زيّك</span>
+                    <span class="chapter-num">06</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- شوية من جوه الكتاب (اقتباسات) -->
+    <!-- Quotes Section -->
     <section id="quotes">
         <div class="container">
-            <div class="section-title">💬 شوية من جوه الكتاب</div>
+            <div class="section-header reveal">
+                <h2>شوية من جوه الكتاب</h2>
+                <div class="line"></div>
+            </div>
+
             <div class="quotes-grid">
-                <div class="quote-card">
-                    <p>"مشكلتك مش إنك بتغلط… مشكلتك إنك فقدت الاتجاه."</p>
+                <div class="quote-card reveal">
+                    <p class="quote-text">"مشكلتك مش إنك بتغلط… مشكلتك إنك فقدت الاتجاه."</p>
                 </div>
-                <div class="quote-card">
-                    <p>"مش معنى إنك وقعت في الحفرة إنك تبني فيها بيت."</p>
+                <div class="quote-card reveal">
+                    <p class="quote-text">"مش معنى إنك وقعت في الحفرة إنك تبني فيها بيت."</p>
                 </div>
-                <div class="quote-card">
-                    <p>"الموبايل جهاز. انت اللي بتقرر تستخدمه، ولا هو اللي بيستخدمك."</p>
+                <div class="quote-card reveal">
+                    <p class="quote-text">"الموبايل جهاز. انت اللي بتقرر تستخدمه، ولا هو اللي بيستخدمك."</p>
                 </div>
-                <div class="quote-card">
-                    <p>"متخليش حد هو كل حياتك. خليك انت كل حياتك. وبعدين شاركها مع حد يستاهل."</p>
+                <div class="quote-card reveal">
+                    <p class="quote-text">"متخليش حد هو كل حياتك. خليك انت كل حياتك. وبعدين شاركها مع حد يستاهل."</p>
                 </div>
-                <div class="quote-card">
-                    <p>"مش مهم طول الغياب. المهم إنك رجعت."</p>
+                <div class="quote-card reveal">
+                    <p class="quote-text">"مش مهم طول الغياب. المهم إنك رجعت."</p>
                 </div>
-                <div class="quote-card">
-                    <p>"التوبة مش نهاية الطريق. التوبة هي بدايته."</p>
+                <div class="quote-card reveal">
+                    <p class="quote-text">"التوبة مش نهاية الطريق. التوبة هي بدايته."</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- عن الكاتب -->
+    <!-- Author Section -->
     <section id="author">
         <div class="container">
-            <div class="author-container">
+            <div class="section-header reveal">
+                <h2>مين الكاتب؟</h2>
+                <div class="line"></div>
+            </div>
+
+            <div class="author-box reveal">
+                <div class="author-img-container">
+                    <div class="author-bg-circle"></div>
+                    <!-- صورة الكاتب 2.jpg -->
+                    <img src="2.jpg" alt="صورة الكاتب" class="author-img">
+                </div>
+                
                 <div class="author-text">
-                    <h3>مين اللي كتب الكتاب ده؟</h3>
-                    <p>مش دكتور. مش شيخ. مش خبير تنمية بشرية.</p>
-                    <strong>واحد زيّك بالظبط.</strong>
+                    <h3 style="font-size: 2.2rem; margin-bottom: 20px;">واحد زيّك بالظبط</h3>
+                    <p style="font-size: 1.2rem; margin-bottom: 15px;">مش دكتور. مش شيخ. مش خبير تنمية بشرية.</p>
                     <p>صحيت الصبح متأخر. فتحت الموبايل قبل ما أغسل وشي. قارنت نفسي بالناس على انستجرام. حسيت إني فاشل.</p>
                     <p>وفضلت أفكر: "أنا بعمل إيه في حياتي؟"</p>
-                    <p style="color: var(--accent-color);">الكتاب ده هو رحلتي في البحث عن إجابة. مش هقول لك إني لقيتها كلها. لكن هقول لك إني بدأت الطريق. وعاوزك تبدأ معايا.</p>
-                </div>
-                <div class="author-img">
-                    <!-- صورة رمزية للكاتب (Placeholder) -->
-                    <img src="2.jpg" alt="صورة الكاتب">
+                    <p class="gold-text" style="margin-top: 20px; font-weight: bold;">الكتاب ده هو رحلتي في البحث عن إجابة. مش هقول لك إني لقيتها كلها. لكن هقول لك إني بدأت الطريق. وعاوزك تبدأ معايا.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- الأسئلة المتكررة -->
+    <!-- FAQ Section -->
     <section id="faq">
         <div class="container">
-            <div class="section-title">❓ أسئلة متكررة</div>
-            
-            <div class="faq-item">
-                <details>
-                    <summary>الكتاب مناسب لمين؟</summary>
-                    <div class="faq-content">
-                        الكتاب مناسب لأي شاب أو شابة في سن الجامعة أو بداية الشغل. أي حد حاسس إنه تايه، بيعاني من الذنوب المتكررة، مدمن سوشيال ميديا، متعلق بعلاقة مضره، أو عاوز يرجع لربنا ومش عارف يبدأ منين.
-                    </div>
-                </details>
+            <div class="section-header reveal">
+                <h2>أسئلة شائعة</h2>
+                <div class="line"></div>
             </div>
 
-            <div class="faq-item">
-                <details>
-                    <summary>هل الكتاب ديني بحت؟</summary>
-                    <div class="faq-content">
-                        الكتاب بيجمع بين الدين وعلم النفس والتجربة الشخصية. فيه آيات وأحاديث، وفيه كمان دراسات علمية ونصائح عملية. هو كتاب شامل بيعالج المشكلة من كل جوانبها.
-                    </div>
-                </details>
-            </div>
+            <div class="faq-container reveal">
+                <div class="faq-item">
+                    <details>
+                        <summary>الكتاب مناسب لمين؟</summary>
+                        <div class="faq-body">
+                            الكتاب مناسب لأي شاب أو شابة في سن الجامعة أو بداية الشغل. أي حد حاسس إنه تايه، بيعاني من الذنوب المتكررة، مدمن سوشيال ميديا، متعلق بعلاقة مضره، أو عاوز يرجع لربنا ومش عارف يبدأ منين.
+                        </div>
+                    </details>
+                </div>
 
-            <div class="faq-item">
-                <details>
-                    <summary>النسخة الإلكترونية مجانية ليه؟</summary>
-                    <div class="faq-content">
-                        عشان أنا عاوز أي حد محتاج الكتاب يوصل له. مش عاوز الفلوس تكون عائق. الهدف إن الكلام يوصل لأكبر عدد من الشباب التايهين. لو حابب تدعم، تقدر تشتري النسخة المطبوعة أو الصوتية.
-                    </div>
-                </details>
-            </div>
+                <div class="faq-item">
+                    <details>
+                        <summary>هل الكتاب ديني بحت؟</summary>
+                        <div class="faq-body">
+                            الكتاب بيجمع بين الدين وعلم النفس والتجربة الشخصية. فيه آيات وأحاديث، وفيه كمان دراسات علمية ونصائح عملية. هو كتاب شامل بيعالج المشكلة من كل جوانبها.
+                        </div>
+                    </details>
+                </div>
 
-            <div class="faq-item">
-                <details>
-                    <summary>الكتاب قد إيه؟</summary>
-                    <div class="faq-content">
-                        الكتاب حوالي 60 صفحة. مش طويل عشان متزهقش. ومش قصير عشان ميكونش سطحي. مدة القراءة حوالي ٣-٤ ساعات لو قريته مرة واحدة، لكن الأفضل تقرأ فصل فصل وتركز في التمارين.
-                    </div>
-                </details>
-            </div>
+                <div class="faq-item">
+                    <details>
+                        <summary>النسخة الإلكترونية مجانية ليه؟</summary>
+                        <div class="faq-body">
+                            عشان أنا عاوز أي حد محتاج الكتاب يوصل له. مش عاوز الفلوس تكون عائق. الهدف إن الكلام يوصل لأكبر عدد من الشباب التايهين. لو حابب تدعم، تقدر تشتري النسخة المطبوعة أو الصوتية.
+                        </div>
+                    </details>
+                </div>
 
-            <div class="faq-item">
-                <details>
-                    <summary>هل في جزء تاني من الكتاب؟</summary>
-                    <div class="faq-content">
-                        حاليًا الكتاب ده هو الجزء الأول والوحيد. لكن لو لقيت تفاعل وحب من القراء، ممكن أكتب جزء تاني عن مواضيع أعمق. تابع الصفحات عشان تعرف الأول بأول.
-                    </div>
-                </details>
-            </div>
+                <div class="faq-item">
+                    <details>
+                        <summary>الكتاب قد إيه؟</summary>
+                        <div class="faq-body">
+                            الكتاب حوالي 60 صفحة. مش طويل عشان متزهقش. ومش قصير عشان ميكونش سطحي. مدة القراءة حوالي  ساعه لو قريته مرة واحدة، لكن الأفضل تقرأ فصل فصل وتركز في التمارين.
+                        </div>
+                    </details>
+                </div>
 
+                <div class="faq-item">
+                    <details>
+                        <summary>هل في جزء تاني من الكتاب؟</summary>
+                        <div class="faq-body">
+                            حاليًا الكتاب ده هو الجزء الأول والوحيد. لكن لو لقيت تفاعل وحب من القراء، ممكن أكتب جزء تاني عن مواضيع أعمق. تابع الصفحات عشان تعرف الأول بأول.
+                        </div>
+                    </details>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- الفوتر -->
+    <!-- Footer -->
     <footer>
         <div class="container">
-            <p>جميع الحقوق محفوظة © 2023 - كتاب <span>ليه تايه؟</span></p>
-            <p style="margin-top: 10px; font-size: 0.8rem;">صُنع بكل حب للشباب التايهين</p>
+            <div class="footer-logo">ليه تايه؟</div>
+            <p style="color: #888;">صُنع بكل حب للشباب التايهين</p>
+            <div class="copyright">
+                جميع الحقوق محفوظة © 2026
+            </div>
         </div>
     </footer>
 
+    <!-- JavaScript logic -->
+    <script>
+        // 1. Mobile Menu Toggle
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            const icon = document.querySelector('.mobile-menu-btn i');
+            
+            navLinks.classList.toggle('active');
+            
+            if (navLinks.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        }
+
+        // 2. Audio Player Logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const playBtn = document.getElementById('playBtn');
+            const audioPanel = document.getElementById('audioPanel');
+            const audio = document.getElementById('podcastAudio');
+            const aboutSection = document.getElementById('about');
+
+            playBtn.addEventListener('click', function() {
+                // Show Player
+                audioPanel.classList.add('active');
+                
+                // Play Audio
+                audio.play().catch(function(error) {
+                    console.log("Audio play failed (browser policy): ", error);
+                    alert("اضغط مرة أخرى للتشغيل أو تأكد من إعدادات المتصفح");
+                });
+
+                // Change Button Text
+                playBtn.innerHTML = '<i class="fas fa-music"></i> جاري التشغيل...';
+                
+                // Smooth Scroll
+                setTimeout(() => {
+                    aboutSection.scrollIntoView({ behavior: 'smooth' });
+                }, 800);
+
+                // Error Handling for missing file
+                audio.addEventListener('error', function() {
+                    audioPanel.innerHTML = '<p style="color: #ff4444; text-align: center;">❌ عذراً، لم يتم العثور على ملف البودكاست (واحد.m4a)</p>';
+                });
+            });
+        });
+
+        // 3. Scroll Reveal Animation (Intersection Observer)
+        const revealElements = document.querySelectorAll('.reveal');
+
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target); // Run once
+                }
+            });
+        }, {
+            root: null,
+            threshold: 0.15 // Trigger when 15% visible
+        });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // 4. Background Particles Canvas (Stars Effect)
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let width, height;
+        let particles = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 2;
+                this.speedX = (Math.random() - 0.5) * 0.2;
+                this.speedY = (Math.random() - 0.5) * 0.2;
+                this.opacity = Math.random() * 0.5;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > width) this.x = 0;
+                if (this.x < 0) this.x = width;
+                if (this.y > height) this.y = 0;
+                if (this.y < 0) this.y = height;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(212, 175, 55, ${this.opacity})`; // Gold stars
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            const particleCount = Math.min(window.innerWidth / 10, 100); // Responsive count
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, width, height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        window.addEventListener('resize', () => {
+            resize();
+            initParticles();
+        });
+
+        // Initialize
+        resize();
+        initParticles();
+        animateParticles();
+
+    </script>
 </body>
 </html>
